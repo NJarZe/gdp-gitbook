@@ -1,5 +1,5 @@
 # Table of contents
 
 * [Home](README.md)
-* [index](untitled.md)
+* [Power BI](power-bi-guidelines.md)
 
