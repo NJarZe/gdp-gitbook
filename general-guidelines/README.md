@@ -1,32 +1,10 @@
-# General Guidelines
-
-### 2.1. Organization
-
-Figure 2 shows the organization of the BICC with its functions. The BICC is supported by local IT teams.
-
-![](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image2.png) Figure 1 BICC Organization
-
-Local projects are delivered by local teams but supported by the BICC. Implementation of group reporting will be done by BICC. Other functions of BICC include demand management, platform management, data and metadata management and support.
-
-### 2.2. Roles
-
-Figure 2 shows the roles for the BICC.
-
-![](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image3.png) Figure 2 BICC Roles
-
-Detail of roles and their responsibilities
+# General Information
 
 ## 3. High Level Design
 
-Figure 6 shows the high-level architecture of the Global Data Platform. Two options are shown for the ingestion of data into the Global Data Platform. Azure integration Runtime is used for data ingestion if Data Factory is used otherwise an ETL/ELT tool can be used directly to write data into ADLS v2. Some ETL/ELT tools can write the data directly to Snowflake but for the purpose of standardization, data will be copied to ADLS first. Using ADLS as a landing zone allows the use of other data analytics tools such as Databricks and gives fast data load/read/write performance.
 
-![](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image7.png) Figure 6 High Level Architecture
 
-The following figure describes the high-level design of the data processing pipelines running on the Global Data Platform \(GDP\).
 
-![](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image8.png) Figure 7 High-Level Pipeline Architecture
-
-As it can be seen in the figure above, the blocks in green represent processing whereas the blocks in blue represent storage. In the following sub-sections, we will describe each of the components shown in the above figure.
 
 ### 3.1. Storage Layer
 
