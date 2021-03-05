@@ -1,11 +1,5 @@
 # General Information
 
-## 3. High Level Design
-
-
-
-
-
 ### 3.1. Storage Layer
 
 The storage layer contains all the logical elements which store data. Each of the logical element is briefly explained below.
