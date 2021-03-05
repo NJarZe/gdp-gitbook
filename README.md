@@ -12,3 +12,5 @@ The documentation described in this site define the **standards and conventions*
 
 All documentation related to GDP is owned and maintained by the Business Intelligence Competence Center, also known as BICC. Any suggestions, corrections and/or additions should be addressed to them.
 
+For additional information about Global Data Platform, please visit the Global Data Platform SharePoint site [here](https://aliaxis365.sharepoint.com/teams/gdp)
+
