@@ -61,12 +61,14 @@ Every repo should have at least two high/root level folders: data-factory and sn
 * data-factory: This folder is where data factory will store its artifacts and code.
 * snowflake-scripts: This folder will contain all the Snowflake code.
 
-Within the snowflake-scripts folder, there should be at least 2 subfolders: dimensions, and facts. Within each subfolder, there should be the following folders:
+Within the snowflake-scripts folder, there needs to be 1 subfolder for each data warehouse layer (STG, DWH). In each data warehouse layer there should be at least 2 subfolders: dimensions, and facts. Within each subfolder, there should be the following folders:
 
 * tables: Contains scripts for table creation, alteration, etc. \(DDL - data definition language\). 
 * stored-procedures: Contains scripts for stored procedure creation.
 * views: Contains scripts for view creation.
 * other: Contains all other scripts.
+
+> **Note:** At the root of STG & DWH folders, there must be a script file snowflake-init.sql. This file will contain the DDLS for all tables, views, stored procedures, file formats, stages, sequences, etc. needed for re-creating the entire environment (without data). 
 
 ## Git Repositories \(repos\)
 
@@ -130,7 +132,7 @@ All commits go to the branch currently being worked on. Code that needs to be mo
 
 ## Merging Strategy
 
-Git allows for several ways to merge code from one branch into another branch, direct merge and pull reqeust.
+Git allows for several ways to merge code from one branch into another branch, direct merge and pull request.
 
 ### Direct merge
 
