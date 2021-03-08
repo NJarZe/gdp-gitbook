@@ -4,7 +4,7 @@
 
 All Power BI artifacts **must** be stored in project-specific workspaces. Each data-platform project will have:
 
-* 1 Development workspace: This workspace will be used for development and user testing
+* 1 Development workspace: This workspace will be used for development and user acceptance testing
 * 1 Production workspace: This workspace is where stable reports are deployed. End users will access these reports via a Power BI app. 
 
 ## Workspaces
@@ -33,7 +33,7 @@ New workspaces for data-platform projects must be created and are owned by the p
 
 The development team must be assigned with the role Member. This role grants sufficient rights for them to create and update reports and the workspace app.
 
-The Division lead should be added to the the workspace with the role Admin. At least one BICC representative should be added to every workspace with the role Admin.
+The Division lead should be added to the workspace with the role Admin. At least one BICC representative should be added to every workspace with the role Admin.
 
 ### Naming convention
 
@@ -51,7 +51,7 @@ Division: This is the acronym for the division, as follows.
 * GLOBAL: Workspaces for Group \(HQ\). These projects are usually managed and worked on by the BICC.
 * BICC: Workspaces for BICC reporting \(monitoring, logging, consumption reports, etc.\) 
 
-Project Name \[Dev\]: This is the last part of the workspace name, and it should be the project name. Spaces are allowed in teh project name. The \[Dev\] indicates that the development workspace should have the word Dev as a suffix.
+Project Name \[Dev\]: This is the last part of the workspace name, and it should be the project name. Spaces are allowed in the project name. The \[Dev\] indicates that the development workspace should have the word Dev as a suffix.
 
 Note: the 3 parts of the workspace name are separated by a hyphen with a space; this is done to make names easier to read.
 
