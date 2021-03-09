@@ -68,7 +68,40 @@ Within the snowflake-scripts folder, there needs to be 1 subfolder for each data
 * views: Contains scripts for view creation.
 * other: Contains all other scripts.
 
-> **Note:** At the root of STG & DWH folders, there must be a script file snowflake-init.sql. This file will contain the DDLS for all tables, views, stored procedures, file formats, stages, sequences, etc. needed for re-creating the entire environment (without data). 
+> **Note** 
+> 
+> At the root of STG & DWH folders, there must be a script file snowflake-init.sql. This file will contain the DDLS for all tables, views, stored procedures, file formats, stages, sequences, etc. needed for re-creating the entire environment (without data). 
+
+Example
+```
+.
+├── data-factory
+│   └── adf-publish
+└── snowflake-scripts
+    ├── snowflake-init.sql
+    ├── stg
+    │   ├── dimensions
+    │   │   ├── tables
+    │   │   ├── stored-procedures
+    │   │   ├── views
+    │   │   └── other
+    │   └── facts
+    │       ├── tables
+    │       ├── stored-procedures
+    │       ├── views
+    │       └── other
+    └── dwh
+        ├── dimensions
+        │   ├── tables
+        │   ├── stored-procedures
+        │   ├── views
+        │   └── other
+        └── facts
+            ├── tables
+            ├── stored-procedures
+            ├── views
+            └── other
+```
 
 ## Git Repositories \(repos\)
 
