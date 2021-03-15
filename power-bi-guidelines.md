@@ -91,16 +91,58 @@ There are generally 2 ways of adding row-level security \(RLS\) to Power BI repo
 
 * Via security tables in the data source \(i.e. Snowflake\)
 
-#### Power BI Integrated Row-Level Security
+### Power BI Integrated Row-Level Security
 
 The row-level security functionality in Power BI is used by adding filters to restrict data access at the row level; these filters can be defined within Power BI roles. 
 
 #### When to use Power BI Integrated RLS?
 
-The RLS integrated in Power BI is **not** the default or recommended approach for the majority of use cases; however, there are cases when this RLS method is approved to be used. 
+The RLS integrated in Power BI is **not the default or recommended** approach for the majority of use cases; however, there are cases when this RLS method is approved to be used. 
 
 * When the report is built for a Proof of Concept \(POC\) purpose. In this case, the report is not intended to go live with a large userbase, but agility is needed to prove a functionality.
 * When reports are built in **Import Mode**. In this scenario, RLS cannot be achieved in any other way, since data refresh happens under one specific user, and user-initiated refreshes don't go to Snowflake. 
+
+### Security Tables in data source \(Snowflake\)
+
+Having the RLS model in the data source is the recommended approach for most of row-level security needs. This approach provides great flexibility and support future changes in the data platform architecture \(i.e. future-proof\). 
+
+By having security tables built in the data source, the RLS will work in cases where people access the data from Power BI \(in direct connection mode\), and also when users access the data from other tools \(for example, MS Excel\). 
+
+#### When to use RLS based on Security Tables in the data source? 
+
+This method is the recommended approach for all row-level security scenarios except the ones mentioned in "When to user Power BI Integrated RLS". 
+
+## Import or DirectQuery Mode?
+
+**Import Mode** copies the data set into Power BI desktop. To refresh the data with the latest changes from the data source, the entire data set must be re-imported into Power BI.
+
+#### Pros of Import Mode
+
+* All Power BI features are available in Import Mode, like alternative login to database connection, relationship filtering with "Both" directions. 
+* It can be faster than DirectQuery Mode, since the data is loaded into memory and queries are read from the data residing in memory.
+* New and calculated columns are fully supported
+
+#### Cons of Import Mode
+
+* Depending on the dataset size, it can consume a lot of memory and space
+* The file size of the Power BI, including the data, cannot exceed 1 GB; which can restrict the usage of Import Mode for large datasets. 
+* Row-level Security must be done in Power BI, cannot use RLS from the source.
+
+**DirectQuery Mode** connects Power BI directly to the data source, allowing for information to be always up to date. There is no data integrated in the Power BI file, therefore the file size remains small. 
+
+#### Pros of DirectQuery Mode
+
+* Data is always current
+* File size limit of 1 GB is no longer an issue
+* Allows for building reports with large datasets
+* Allows for using row-level security based on tables in the source.
+
+#### Cons of DirectQuery Mode
+
+* Can be slower than Import Mode
+* Not all Power BI features are available. Availability will depend on the data source and type of data being used. 
+* Not all DAX functions are supported
+* Time capabilities \(for YTD calculations, for example\) are sometimes not supported
 
 
 
