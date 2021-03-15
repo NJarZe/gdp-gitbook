@@ -25,8 +25,8 @@ The production workspace contains stable and validated reports that end users ca
 
 The app must then be shared with end-users who will access the app and be able to consume all reports that have been deployed in it.
 
-> Note: 
-> 
+> Note:
+>
 > Reports that exist in the production workspace should **never** be modified directly in this workspace. If any modification is needed, the report must be changed and published in the development workspace; then validated by the user using the dev workspace's app. When all validations have been done and the report is ready for production, the report must be published to the Production workspace.
 
 ### Organization and Governance
@@ -56,7 +56,7 @@ Division: This is the acronym for the division, as follows.
 Project Name \[Dev\]: This is the last part of the workspace name, and it should be the project name. Spaces are allowed in the project name. The \[Dev\] indicates that the development workspace should have the word Dev as a suffix.
 
 > Note:
-> 
+>
 > The 3 parts of the workspace name are separated by a hyphen with a space; this is done to make names easier to read.
 
 ## Apps
@@ -79,11 +79,28 @@ When reports are ready to be distributed to end users, the Project Lead will cre
 
 All apps should be named exactly as the workspace to where they belong. For example, if an app is being created for a workspace called "GDP - BICC - Snowflake Consumption Monitoring", then the app should be named "GDP - BICC - Snowflake Consumption Monitoring".
 
-## Row-Level Security (RLS)
+## Row-Level Security \(RLS\)
 
-There are generally 2 ways of adding row-level security (RLS) to Power BI reports. 
+Row-level security is a security feature that, when present in a report, lets you limit the data that is visible by a user based on different roles. Instead of hiding entire tables and visuals, you can keep those tables visible, but hide specific rows of data from certain users. 
+
+There are generally 2 ways of adding row-level security \(RLS\) to Power BI reports.
 
 1. Via roles integrated in Power BI
-![Power BI Integrated Roles](../.gitbook/assets/pbi-manage-roles.png)
-2. Via security tables in the data source (i.e. Snowflake)
+
+   ![Power BI Integrated Roles](.gitbook/assets/pbi-manage-roles.png)
+
+2. Via security tables in the data source \(i.e. Snowflake\)
+
+#### Power BI Integrated Row-Level Security
+
+The row-level security functionality in Power BI is used by adding filters to restrict data access at the row level; these filters can be defined within Power BI roles. 
+
+#### When to use Power BI Integrated RLS?
+
+The RLS integrated in Power BI is **not** the default or recommended approach for the majority of use cases; however, there are cases when this RLS method is approved to be used. 
+
+* When the report is built for a Proof of Concept \(POC\) purpose. In this case, the report is not intended to go live with a large userbase, but agility is needed to prove a functionality.
+* When reports are built in **Import Mode**. In this scenario, RLS cannot be achieved in any other way, since data refresh happens under one specific user, and user-initiated refreshes don't go to Snowflake. 
+
+
 
