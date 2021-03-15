@@ -85,11 +85,11 @@ Row-level security is a security feature that, when present in a report, lets yo
 
 There are generally 2 ways of adding row-level security \(RLS\) to Power BI reports.
 
-1. Via roles integrated in Power BI
+* Via roles integrated in Power BI
 
-   ![Power BI Integrated Roles](.gitbook/assets/pbi-manage-roles.png)
+![](.gitbook/assets/pbi-manage-roles.png)
 
-2. Via security tables in the data source \(i.e. Snowflake\)
+* Via security tables in the data source \(i.e. Snowflake\)
 
 #### Power BI Integrated Row-Level Security
 
