@@ -1,4 +1,4 @@
-# General Information
+# Global Data Platform
 
 ### 3.1. Storage Layer
 
