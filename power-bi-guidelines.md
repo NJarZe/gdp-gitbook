@@ -79,6 +79,30 @@ When reports are ready to be distributed to end users, the Project Lead will cre
 
 All apps should be named exactly as the workspace to where they belong. For example, if an app is being created for a workspace called "GDP - BICC - Snowflake Consumption Monitoring", then the app should be named "GDP - BICC - Snowflake Consumption Monitoring".
 
+## Power BI Datasets
+
+When data is imported \(using Import Mode\) or referenced \(using DirectQuery Mode\) from Power BI Desktop, Power BI will create a dataset that contains the tables/views and relationships that are being used in the report. When a report is published into the Power BI Service, the dataset \(or underlying data model\) is published alongside the report itself. 
+
+Datasets are Power BI's way of sharing data without sharing a report, which is a collections of visual representations of that data. Power BI datasets can therefore become the _one source of truth_ when it comes to how data is consumed from Power BI. 
+
+Just like reports and apps, Power BI Datasets can be shared with other Power BI users in the organization,  which can enable data sharing and self-service capabilities.
+
+> Note:
+>
+> Sharing a dataset doesn't automatically grant access to all the data referenced in the dataset. Proper permissions must be given at the data source level for users to be able to access the data.
+
+### Reusing Datasets
+
+Since Power BI datasets can be shared with other users, that means that data models that have been built and proven to be accurate can be re-used by other users without having to rethink \(or reinvent\) these models. This is what reusing \(sharing\) datasets is all about, sharing knowledge about a certain data topic, so other users can _"just use"_ the data without worrying about its validity or accuracy. 
+
+Sharing Power BI datasets is highly encouraged for cases where self-service analytics or reporting is relevant, since most of the modelling work would have already been done by the dataset owner, who is to be considered knowledgeable enough about the data, that his work is taken as valid and approved.
+
+### Dataset Certification
+
+Going further into dataset sharing and data accuracy, Power BI Datasets can be certified or promoted. Both options are ways to endorse the content that has been created, to increase visibility and reuse. 
+
+For more information about Endorsing Datasets, please refer to the Microsoft documentation in [this link](https://docs.microsoft.com/en-us/power-bi/collaborate-share/service-endorse-content).
+
 ## Row-Level Security \(RLS\)
 
 Row-level security is a security feature that, when present in a report, lets you limit the data that is visible by a user based on different roles. Instead of hiding entire tables and visuals, you can keep those tables visible, but hide specific rows of data from certain users. 
