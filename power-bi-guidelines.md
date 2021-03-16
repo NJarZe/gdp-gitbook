@@ -111,7 +111,7 @@ There are generally 2 ways of adding row-level security \(RLS\) to Power BI repo
 
 * Via roles integrated in Power BI
 
-![](.gitbook/assets/pbi-manage-roles.png)
+![Role Management in Power BI Desktop](.gitbook/assets/pbi-manage-roles.png)
 
 * Via security tables in the data source \(i.e. Snowflake\)
 
