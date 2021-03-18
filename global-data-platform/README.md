@@ -1,18 +1,8 @@
 # Global Data Platform
 
-#### 
-
-### 3.2. Processing Layer
-
-In the following, different elements of the processing layer are briefly explained.
-
-#### 
-
 ### 3.3. Spectrum of Responsibility
 
-Figure 11 shows the spectrum of responsibility. Loading/Ingestion of the data into the GDP and making it available for the local teams to consume is recommended to be the responsibility of the local teams. Reading the data from ODS/Raw zone and delivering the Data Marts is the responsibility of the local teams. If the DWH Loading framework is used, the last step of loading the DWH can be automated and can also be centralized at BICC. In any case, BICC will help & support the local teams in the implementation.
 
-![](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image12.png) Figure 11 Spectrum of Responsibility
 
 ## 4. Design Rules
 
