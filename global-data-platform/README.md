@@ -1,109 +1,12 @@
 # Global Data Platform
 
-### 3.1. Storage Layer
-
-The storage layer contains all the logical elements which store data. Each of the logical element is briefly explained below.
-
-#### 3.1.1. Source Systems
-
-A source system is any relational database or file which contains useful information for Aliaxis and needs to be loaded into the GDP. The source system can be any on-prem as well as cloud data store.
-
-#### 3.1.2. Landing Zone
-
-Landing zone is an area on Azure Data Lake Store Gen 2 \(ADLS\) responsible for receiving all data required to be ingested to the GDP. ADLS is a binary data store which can store all types of text or binary files. It is highly scalable and can store terabytes of data without performance degradation. Instead of ADLS, Azure Blob Storage can also be used but ADLS has the following most important advantages over the Blob Storage:
-
-1. Hadoop Distributed File System \(HDFS\) API support which means that all big data processing tools like Apache Spark can connect to it and process data.
-2. Hierarchical File Structure allowing faster file system operations. e.g., renaming or access control
-3. Faster analytical processing performance
-
-Support for ADLS V2 has recently been added by Snowflake and is in public preview at the time of writing of this document. More details can be found [here](https://www.snowflake.com/blog/snowflake-support-for-microsofts-adls-gen2-public-preview/).
-
-The landing zone is intended as:
-
-* The storage zone for the raw ingested data
-* An archive allowing reprocessing if so required
-
-Each data that gets ingested in GDP first lands in this zone. This zone has the following properties:
-
-* Data is stored in its original format without modification.
-* Data is arranged with respect to the date \(for daily ingests\), hour \(for hourly ingestion\), week or month of ingestion based on the ingestion frequency. The recommended date format is YYYY-MM-DD.
-* There is no obligation to map metadata to the data but if required for technical debugging, metadata can be mapped.
-* Such metadata is not be exposed to the business users. Metadata is attached to the ODS.
-* Only technical users or data engineers have access to this zone.
-* It acts as an archive of the data and if the downstream data products are lost, these can be recreated from the data in the landing zone.
-
-#### 3.1.3. Operational Data Store \(ODS\)
-
-An operational data store \(ODS\) is a central database that provides a snapshot of the latest data from multiple transactional systems for operational reporting. It enables organizations to combine data in its original format from various [sources](https://www.stitchdata.com/integrations/sources/) into a single [destination](https://www.stitchdata.com/integrations/destinations/) to make it available for business reporting.
-
-ODS has its own staging area/raw zone which stores intermediate data arriving from the landing zone. For instance, when delta is received for a table from the landing zone, the delta needs to be applied to the table in the ODS to get its current state. If a snapshot is received, it can directly be loaded to ODS following the right naming conventions.
-
-The reporting tools can be connected directly to ODS for operational reporting but not to the raw zone of the ODS. Transformation tools creating data marts can access both the raw zone as well as the ODS.
-
-ODS has following properties:
-
-* Metadata is mapped to the data available in ODS.
-* ODS is exposed for querying to the business users as well as the use-case applications for ad hoc/batch queries.
-* Quality checks are performed on this zone to make sure that the data is consistent with the source
-* The data in this zone is supposed to be a replica of the data in the source systems or a view of the source data e.g., SCD2, SCD3 etc. and should not be a new dataset created based on multiple sources.
-
-#### 3.1.4. Staging \(STG\)
-
-The staging layer contains prepared data ready to be loaded into a data warehouse/data mart. The schema of a staging table is similar to its corresponding target table in the data warehouse.
-
-#### 3.1.5. Data Warehouse \(DWH\)
-
-The term DWH here represents an EDW or a data mart. As we follow Kimball’s approach, first data marts will be built. Reporting/BI tools connect to the DWH directly.
+#### 
 
 ### 3.2. Processing Layer
 
 In the following, different elements of the processing layer are briefly explained.
 
-#### 3.2.1. Ingestion Tool
-
-The ingestion tool \(also called the loading tool\) is responsible for extracting data from the source systems \(on-prem/cloud\) and loading/ingesting it to the GDP. Many tools exist in the market, e.g., Azure Data Factory, Talend, Rivery etc.
-
-**3.2.1.1. Azure Data Factory**
-
-As the choice of the tools \(ingestion/ETL\) is out of scope, we only provide high-level principles and recommendations regarding the choice. For the purpose of completeness of this document, we will take Azure Data Factory \(ADF\) as the ingestion tool. ADF can not only act as an ingestion tool but also as an orchestration tool connecting different pieces of a pipeline together.
-
-Figure 2 shows the high-level architecture of the GDP data processing pipelines with technologies. ADF has been added in the orchestration layer. The ingestion is performed by ADF Copy activity which has several connectors for connecting with a diverse set of data stores. A list of supported data sources can be found [here](https://docs.microsoft.com/en-us/azure/data-factory/connector-overview). Note that ADF supports SAP Business Warehouse, SAP HANA and SAP Table as data sources. In Figure 8, ADF copy activity extracts the data from the source systems and copies it to the landing zone. Once the data is copied, Snowflake pull is triggered by ADF. The pull can be a copy command or a Snowpipe. Snowflake now supports auto-ingest Snowpipe for loading data based on file notifications via Azure Event Grid.
-
-ADF acts as an orchestrator and can sequentially execute the copy activity followed by the Snowflake Pull.
-
-![](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image9.png) Figure 8 High Level Architecture with Processing Technologies
-
-#### 3.2.2. Snowflake Pull
-
-There are two ways how Snowflake can pull data into Snowflake. 1. Copy command for bulk loading of data 2. Snowpipe for continuous loading of data
-
-Apparently Snowpipe is a more attractive option compared to the Copy command but a Snowpipe needs to be configured for each table. In the following, we briefly explain how the Snowflake pull can be configured with ADF
-
-**3.2.2.1. Copy Command**
-
-A stored procedure containing the copy command can be created. ADF can call the stored procedure using the .NET API running in an Azure function. As ADF already knows which files were copied to ADLS, the list of the files is passed to the stored procedure which ingests the data using the copy command. In case of failures, the error is passed back to ADF and can be viewed in ADF. This provides a single pane of glass for data loading.
-
-Creation of file formats for new tables to be ingested can be automated before ingestion into Snowflake.
-
-**3.2.2.2. Snowpipe Auto-Ingest**
-
-A Snowpipe can be created with auto-ingest enabled. An integration with Azure event hub needs to be created for each snow-pipe and a Snowpipe is needed for each table. This requires some additional effort for the configuration of ADLS notifications push to Azure Event Hub and then consumption of those notifications by Snowflake. Also, the loading errors are visible in Snowflake \(not in ADF\). Thus, for complete visibility of data ingestion, both the platforms \(ADF and Snowflake\) need to logged into. ADF can be used for an automated creation of the Snowpipe per table. Figure 9 shows the process flow of an Auto-Ingest Snowpipe. More details about creation of an automated Snowpipe can be found [here](https://docs.snowflake.com/en/user-guide/data-load-snowpipe-auto-azure.html).
-
-![Snowpipe Auto-ingest Process Flow](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image10.png) Figure 9 Snowpipe Auto-Ingest Process Flow
-
-**3.2.2.3. Snowpipe via REST API**
-
-Snowpipes can be called via a REST api when auto-ingest option is disabled. In this case, ADF can call the Snowpipe right after copying the data into ADLS. Figure 10 show the process of calling the Snowpipe REST endpoint for ingestion of data loaded into a stage which is ADLS in our case. As shown, there are two steps for data ingestion using this approach. Step 1 involves loading data into ADLS. Step 2 involves calling the REST endpoint of the corresponding Snowpipe with the paths of files that need to be ingested. The paths of these files are inserted in the ingest queue and the files are ingested by the Snowpipe using the COPY command. Both the steps can be orchestrated using ADF.
-
-![Snowpipe Process Flow](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image11.png) Figure 10 Calling a Snowpipe via its REST Endpoint
-
-#### 3.2.3. Transformation Tool
-
-The transformation tool reads the data from the ODS or the raw zone of the ODS and after transformation/integration of data, puts the result in the staging area of the DWH. The choice of the transformation tool is out of scope of this exercise but for the purpose of completeness, we take SnowSQL has the transformation tool.
-
-#### 3.2.4. DWH Loading Framework
-
-The process of loading the data from the staging Dimension/Fact tables to the target Dimension/Fact tables can be automated via a framework. Keyrus has such a framework for SQL Server Integration Service but can be modified to work with Snowflake. If the framework is not used, SnowSQL procedures can be used to do the same. The process of reading the data from ODS/Raw zone, writing the transformed/integrated data into staging tables and loading the data from the staging tables to the DWH can be orchestrated by ADF.
+#### 
 
 ### 3.3. Spectrum of Responsibility
 
