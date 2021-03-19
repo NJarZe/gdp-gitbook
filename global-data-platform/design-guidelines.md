@@ -182,7 +182,7 @@ Option 2 is recommended. In this case, all queries to the tables should contain 
 #### ODS Guidelines
 
 * One ODS database per division and per environment \(DEV, TST, PRD\)
-* The naming convention for the ODS database is {DIV}{ENV}\_ODS. For example EMEADEVODS for the ODS database of the development environment for EMEA.
+* The naming convention for the ODS database is {DIV}\_{ENV}\_ODS. For example EMEA\_DEV\_ODS for the ODS database of the development environment for EMEA.
 * One schema for each source system
 * Table structure
   * Tables should be named with the same name as the original table.
@@ -230,29 +230,59 @@ There is a sandbox database, which can be used for testing any scenario or code.
 
 ### META
 
-The META database is used for storage of all non-data entities. The META database should follow the following naming convention:
+The META database is used for storage of all non-data entities. The META database should follow the following naming convention {DIV}\_{ENV}\_META
 
-> {DIV}\_{ENV}\_META
+Following should be the schemas in the META database. 
 
-Following should be the schemas in the META database. 1. **USP**: This schema stores the User Stored Procedures written by local teams for transformation etc. E.g., EMEA\_PRD\_META.USP.USP\_STG\_DIM\_CUSTOMER for a USP loading data to the staging table of the customer dimension. 2. **CSP**: This schema stores the Common Stored Procedures \(CSPs\) common to all projects with in a division but not to other divisions. 3. **FF**: The File Format \(FF\) schema stores all file formats used within a DIV. For instance, a JSON file format can be stored as: EMEA\_PRD\_META.FF.FF\_JSON. It is recommended to use global file formats as a standard but for loading of files not coming through the ingestion system, local file formats can be created. 4. **MONITORING**: All monitoring information regarding the transformation pipelines is stored in this schema.
+1. **USP**: This schema stores the User Stored Procedures written by local teams for transformation etc. E.g., EMEA\_PRD\_META.USP.USP\_STG\_DIM\_CUSTOMER for a USP loading data to the staging table of the customer dimension. 
+2. **CSP**: This schema stores the Common Stored Procedures \(CSPs\) common to all projects with in a division but not to other divisions. 
+3. **FF**: The File Format \(FF\) schema stores all file formats used within a DIV. For instance, a JSON file format can be stored as: EMEA\_PRD\_META.FF.FF\_JSON. It is recommended to use global file formats as a standard but for loading of files not coming through the ingestion system, local file formats can be created. 
+4. **MONITORING**: All monitoring information regarding the transformation pipelines is stored in this schema.
 
-#### 4.1.9. COMMON
-
-The common schema contains DIV wide models that can be used across projects. There can be two types of data that should be stored in the common schema.
-
-1. Enterprise data model \(EDM\) within DIV scope
-2. Division wide data entities useful across projects/business lines, e.g., Customer
-
-### 4.2. Deployment Scripts/Stored Procedures
+## Deployment Scripts/Stored Procedures
 
 The deployment scripts as well as the stored procedures should use {ENV} as a variable. Use of {ENV} as a variable allows the promotion of the code to different environments via deployment scripts without any change to the code.
 
-### 4.3. Naming conventions
+### Coding conventions
 
-#### 4.3.1. General
+* Never use “select \* …”
+* Use aliases for table names and always use these for each column \(in the select, join, where, …\)
+* Use the ANSI join, not the old syntax with the join in the “where”-clause.
+* Use a column list in an insert statement
+* Use columns names in the order clause not the column numbers
+* SQL statements should be readable:
+  * Use indentation
+  * Each statement will begin a new line and use at least on empty line to separate statements
+  * Use spaces in expressions E.g. a = 1 not a=1
+  * Use parentheses to group conditions in the WHERE clause when using “OR”
+* Declare statements should be placed before any other code
+* If temporary tables are used, always check their existence before using them. Those tables will not be dropped for debugging reasons.
+* Stored procedures should have a coding header containing:
+  * Name
+  * Parameters \(if used\)
+  * Return \(if used\)
+  * Description
+* For example,
+
+```text
+-- =============================================
+-- Name: USP\_test
+-- Parameters:
+-- @param1: first parameter
+-- @param2: second parameter
+-- Return: nothing
+-- Description: This is an example of a description
+-- =============================================
+```
+
+* Never use checksum\(\) and binary\_checksum\(\) for change detection because these can give wrong results and are not always 100% reliable.
+
+## Naming conventions
+
+### General
 
 * By default, use English
-* For data sources replicated to the GDP, the field/table names in local language will be replicated but effort should be made that the new entities’ names should be in English
+* For data sources replicated to the GDP, the field/table names in local language will be replicated but effort should be made so new entity names should be in English
 * Never use SQL keywords as the name for objects
 * Never use white space
 * Names must be readable and meaningful
@@ -262,43 +292,30 @@ The deployment scripts as well as the stored procedures should use {ENV} as a va
   * Product\_Name, Product\_Category =&gt; Name, Category in the Product dimension
   * Date in the Hourly table =} hourly\_dt
 
-#### 4.3.2. Databases
+### Databases
 
 * All DB’s names must be in capital letters
-* For lower environments add \_{ENV} to the DB name.
-  * E.g. EMEA\_DEV\_ODS
+* For lower environments add \_{ENV} to the DB name. E.g. EMEA\_DEV\_ODS
 
-#### 4.3.3. Tables
+### Tables
 
 * All table names must be in capital letters
 * No prefixes for landing, staging and data warehouse are needed because the tables are in different databases/schemas.
 * Tables should be called:
-  * Operational Data Store \(ODS\):
-    * {source system name}
-  * Staging \(STG\):
-    * DIM\_{name} or FACT\_{name}:
-      * {name} = name of dimension or fact in the DWH
-      * Target table of the staging area which should be an almost exact copy of the DWH-table
-    * When there are local \(country-specific\) projects that will load the same dimension or fact, but without names or language translations that will common for the division, the table must have the company code as a suffix. 
+  * In Operational Data Store \(ODS\) layer: {source system name}
+  * In Staging \(STG\) layer: DIM\_{name} or FACT\_{name}
+  * In Data Warehouse \(DWH\) layer: DIM\_{name}, FACT\_{name}, BRIDGE\_{name}
+  * Proper use of prefixing in the data warehouse database should only include the above prefixes so that everyone can recognize the data.
+* Target table of the staging area should be an almost exact copy of the DWH table
+* When there are local \(country-specific\) projects that will load the same dimension or fact, but without names or language translations that will be common for the division, the table must have the company code as a suffix. For example, 
+  * EMEA as a division has created a customer dimension table DIM\_CUSTOMER. 
+  * A local project in Spain needs to build reports that will show Spain-specific customers, with a customer hierarchy that doesn’t match the hierarchy used at the divisional level. 
+  * In this case, Spain will create a customer dimension table DIM\_CUSTOMER\_ES001, that will hold the customer information that is specific for the Spanish local projects.
+* TMP\_{name} for intermediate staging tables, if necessary
 
-      For example, 
+### Fields
 
-      EMEA as a division has created a customer dimension table DIM\_CUSTOMER. 
-
-      A local project in Spain needs to build reports that will show Spain-specific customers, with a customer hierarchy that doesn’t match the hierarchy used at the divisional level. 
-
-      In this case, Spain will create a customer dimension table DIM\_CUSTOMER\_ES001, that will hold the customer information that is specific for the Spanish local projects.
-
-    * TMP\_{name} for intermediate staging tables if necessary
-  * Data Warehouse \(DWH\):
-    * DIM\_{dimension name}
-    * FACT\_{fact name} for aggregate tables, add suffix ‘\_AGG’
-    * BRIDGE\_{bridge name}
-    * Proper use of prefixing in the data warehouse database should only include the above prefixes so that everyone can recognize the data.
-
-#### 4.3.4. Fields
-
-* Use whole words where possible \(abbreviations should be avoided, acronyms and common usage excepted\)
+* Use whole words where possible \(abbreviations should be avoided, acronyms and common usage are accepted\)
 * Never use reserved keywords [https://docs.snowflake.com/en/sql-reference/reserved-keywords.html](https://docs.snowflake.com/en/sql-reference/reserved-keywords.html)
 * List of accepted abbreviations. Other abbreviations should be registered in the knowledge base \(e.g., this document\) before usage.
   * ID = Identifier
@@ -320,19 +337,19 @@ The deployment scripts as well as the stored procedures should use {ENV} as a va
 * When SCD2 is used on dimensions a first surrogate key must be created. It should be called {table\_name}\_FSK. This is for all versions of the dimensions the same value, it contains the first SK from for that dimension;
 * The reference on a fact table to a dimension table should be called {referenced table name}\_FK and also {referenced table name}\_FFK. The \_FK point to the historical correct version of the dimension, the \_FFK points to all dimension records with the same business key but in combination with the T\_Is\_Current field \(on the dimension\) it always gives the current version of the dimension. \(Context: Slowly Changing Dimension\)
 
-#### 4.3.5. Views
+### Views
 
 * VW\_{description of the view}
 
-#### 4.3.6. Stored procedures
+### Stored procedures
 
-* “USP\_...”
+* “USP\_{description of stored procedure}”
 
-#### 4.3.7. Users
+### Users
 
-* For users that were created in Snowflake \)in contrast to users that were created in AD\) add prefix of sf\_ before the user name
+For users that were created in Snowflake \(in contrast to users that were created in AD\) add prefix of sf\_ before the user name. For example, sf\_new\_snowflake\_user
 
-#### 4.3.8. Data Factory
+### Data Factory
 
 There should be two data factory instances per DIV. 1. Local Data Factory: This factory is responsible for all orchestration activities within a DIV for local implementations. 2. BICC Data Factory: This factory contains the pipelines used for DIV’s BICC pipelines e.g., data ingestion & Lifecycle management.
 
@@ -341,48 +358,16 @@ The following naming convension should be followed:
 * {DIV}\_{ENV}\_DF for local implementations
 * {DIV}\_{ENV}\_DF\_BICC for BICC pipelines
 
-### 4.4. Coding conventions
+## Additional conventions
 
-* Never use “select \* …”
-* Use aliases for table names and always use these for each column \(in the select, join, where, …\)
-* Use the ANSI join, not the old syntax with the join in the “where”-clause.
-* Use a column list in an insert statement
-* Use columns names in the order clause not the column numbers
-* SQL statements should be readable:
-  * Use indentation
-  * Each statement will begin a new line and use at least on empty line to separate statements
-  * Use spaces in expressions E.g. a = 1 not a=1
-  * Use parentheses to group conditions in the WHERE clause when using “OR”
-* Declare statements should be placed before any other code
-* If temporary tables are used, always check their existence before using them. Those tables will not be dropped for debugging reasons.
-* Stored procedures should have a coding header containing:
-  * Name
-  * Parameters \(if used\)
-  * Return \(if used\)
-  * Description
+### ODS Staging Tables
 
-```text
--- =============================================
--- Name: USP\_test
--- Parameters:
--- @param1: first parameter
--- @param2: second parameter
--- Return: nothing
--- Description: This is an example of a description
--- =============================================
-```
+Every table in ODS must have audit fields which must be set in the ETL, not with triggers:
 
-* Never use checksum\(\) and binary\_checksum\(\) for change detection because these can give wrong results and are not always 100% reliable.
+* FILE\_NAME = the file id in which the data originally was presented
+* SF\_TIMESTAMP = creation date and time: Default CURRENT\_TIMESTAMP\(\)
 
-### 4.5. Design conventions
-
-#### 4.5.1. ODS Staging Tables
-
-* Every table must have audit fields which must be set in the ETL, not with triggers:
-  * FILE\_NAME = the file id in which the data originally was presented
-  * SF\_TIMESTAMP = creation date and time: Default CURRENT\_TIMESTAMP\(\)
-
-#### 4.5.2. Datawarehouse tables
+### Datawarehouse tables
 
 * Every table in DWH must have audit fields which must be set in the ETL, not with triggers:
   * CREATE\_TIMESTAMP = creation date and time: Default GETDATE\(\)
@@ -393,11 +378,7 @@ The following naming convension should be followed:
 * All non-measure columns should be “not nullable”.
 * For all foreign keys on a fact table the values of the corresponding business keys will be stored on the table as well.
 
-#### 4.5.3. Staging Tables
-
-* Is an exact copy of the DWH tables
-
-#### 4.5.4. Data types
+### Data types
 
 * Use INT for numbers without a fractional component.
 * Use NUMBER\(30,X\) to define numbers with a fractional component. Details [here](https://support.snowflake.net/s/article/To-Float-or-Not-to-Float-Choosing-Correct-Numeric-Data-Type-in-Snowflake).
@@ -406,7 +387,11 @@ The following naming convension should be followed:
 * For all fields containing a string, e.g., Varchar or nvarchar, STRING datatype should be used
 * Use integers for storing year/month/day values
 
-#### 4.5.5. Data Models
+### Data Models
 
-In this section, we cover the data models of the different storage areas in the data platform. The landing zone contains data as files in directories partitioned by the date/time of ingestion. The ODS stores data in the model used by the source systems which mostly 3NF but referential integrities are not enforced. In DWH, for the storage of data marts, dimensional model is used. The choice of snowflake vs star schema depends on the usecase and is determined by the development team. DWH also contains the enterprise data model. When a project is initiated for the EDM, the data architect should determine the suitable storage model.
+The landing zone contains data as files in directories partitioned by the date/time of ingestion. 
+
+The ODS stores data in the model used by the source systems which mostly 3NF but referential integrities are not enforced. 
+
+In DWH, for the storage of data marts, dimensional model is used. The choice of snowflake vs star schema depends on the usecase and is determined by the development team. DWH also contains the enterprise data model. When a project is initiated for the EDM, the data architect should determine the suitable storage model.
 
