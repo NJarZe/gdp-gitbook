@@ -83,6 +83,30 @@ Both the steps can be orchestrated using ADF.
 
 ![Snowpipe Process Flow](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image11.png) Figure 10 Calling a Snowpipe via its REST Endpoint
 
+## General Principles for Data Ingestion
+
+Loading of data from on-prem source systems to Snowflake should follow the following principles:
+
+1. Data ingestion function should be centrally managed in BICC:
+   1. To ensure standardization of data loading process.
+   2. For cost reduction as tool related skills not required to developed locally.
+   3. For central monitoring
+   4. For handling runs, reruns, failures and error resolution
+   5. To ensure data consistency
+2. Data ingestion system should be cloud based
+   1. For central management & monitoring
+   2. Standardization across countries
+   3. No Capex
+   4. Scalability
+   5. Easier management
+3. Data ingestion system should be automated. Once a source system is connected, it should be able to ingest data with minimal effort.
+4. Data ingestion system should be context aware or based on templates supporting environment variables. The environment variables should be adjusted per the country of source.
+5. The system should automatically create technical metadata of the tables ingested.
+6. The system should be able to map types between the source systems and snowflake.
+7. The system should be able to support the following types of ingestion:
+   1. Snapshot in time via bulk loading
+   2. Delta based on a column with temporal information \(timestamp/incremental id\)
+
 ## Transformation Tool
 
 The transformation tool reads data from the ODS, applies any transformations, cleanups and aggregations, and puts the result in the staging layer \(STG\). 

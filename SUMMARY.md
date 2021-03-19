@@ -1,12 +1,15 @@
 # Table of contents
 
 * [Home](README.md)
-* [Global Data Platform](global-data-platform/README.md)
-  * [BICC Organization](global-data-platform/bicc-organization.md)
-  * [High-Level Design](global-data-platform/high-level-design.md)
-  * [Data Storage Layers](global-data-platform/data-storage-layers.md)
-  * [Data Processing](global-data-platform/data-processing.md)
-  * [Design Guidelines](global-data-platform/design-guidelines.md)
+* [BICC Organization](bicc-organization.md)
+* [High-Level Design](high-level-design.md)
+* [Data Storage Layers](data-storage-layers.md)
+* [Data Processing](data-processing.md)
+* [Design Guidelines](design-guidelines.md)
+* [Security](security.md)
+* [Data Loading Strategy](data-loading-strategy.md)
+* [Snowflake Configuration](snowflake-configuration.md)
 * [Version Control](version-control.md)
 * [Power BI](power-bi-guidelines.md)
+* [Glossary](glossary.md)
 
