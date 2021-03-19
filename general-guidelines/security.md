@@ -75,7 +75,7 @@ User from EMEA can join data between EMEA and APAC by using the fully qualified 
 
 ## Power BI Security
 
-The general guidelines for Power BI security are the following. For information about Power BI governance and organization, see [Power BI](power-bi-guidelines.md) section.
+The general guidelines for Power BI security are the following. For information about Power BI governance and organization, see [Power BI](../product-specific-guidelines/power-bi-guidelines.md) section.
 
 * Workspaces are the lowest level of access control in PBI. Big workspaces containing datasets/dashboards for multiple business lines should not be created.
 * Separate workspaces should be created for DEV/PRD

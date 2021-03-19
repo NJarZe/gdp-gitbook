@@ -1,15 +1,30 @@
 # Table of contents
 
 * [Home](README.md)
-* [BICC Organization](bicc-organization.md)
-* [High-Level Design](high-level-design.md)
-* [Data Storage Layers](data-storage-layers.md)
-* [Data Processing](data-processing.md)
-* [Design Guidelines](design-guidelines.md)
-* [Security](security.md)
-* [Data Loading Strategy](data-loading-strategy.md)
-* [Snowflake Configuration](snowflake-configuration.md)
-* [Version Control](version-control.md)
-* [Power BI](power-bi-guidelines.md)
+
+## Global Data Platform
+
+* [BICC Organization](global-data-platform/bicc-organization.md)
+* [High-Level Design](global-data-platform/high-level-design.md)
+
+## General Guidelines
+
+* [Data Storage Layers](general-guidelines/data-storage-layers.md)
+* [Data Processing](general-guidelines/data-processing.md)
+* [Design Guidelines](general-guidelines/design-guidelines.md)
+* [Data Loading Strategy](general-guidelines/data-loading-strategy.md)
+* [Security](general-guidelines/security.md)
+
+## Product-Specific Guidelines
+
+* [Snowflake Configuration](product-specific-guidelines/snowflake-configuration.md)
+* [Power BI](product-specific-guidelines/power-bi-guidelines.md)
+
+## Version Control <a id="version-control-1"></a>
+
+* [Version Control Guidelines](version-control-1/version-control-guidelines.md)
+
+---
+
 * [Glossary](glossary.md)
 

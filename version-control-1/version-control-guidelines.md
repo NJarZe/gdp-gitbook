@@ -1,4 +1,4 @@
-# Version Control
+# Version Control Guidelines
 
 Version control, also known as source control, is the practice of tracking and managing changes to software code. Version control systems are software tools that help software teams manage changes to source code over time. As development environments have accelerated, version control systems help software teams work faster and smarter.
 
