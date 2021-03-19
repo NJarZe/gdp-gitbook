@@ -42,7 +42,7 @@ Whenever it's required to rebuild the dev environment clone the relevant PRD DB 
 Cloning replicates all granted privileges on the corresponding child objects: schemas, tables, views, etc. besides the source object itself.
 
 {% hint style="warning" %}
-Note: If the target table is fully qualified in the COPY statement in the pipe definition \(in the form of db\_name.schema\_name.table\_name or schema\_name.table\_name\), this can result in duplicate data getting loaded into the target table in the source database or schema by each pipe.
+**Caution:** If the target table is fully qualified in the COPY statement in the pipe definition \(in the form of db\_name.schema\_name.table\_name or schema\_name.table\_name\), this can result in duplicate data getting loaded into the target table in the source database or schema by each pipe.
 {% endhint %}
 
 Cloned pipe objects that have the AUTO\_INGEST parameter set to TRUE will be in a new state, STOPPED\_CLONED, by default.

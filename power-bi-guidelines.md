@@ -25,9 +25,9 @@ The production workspace contains stable and validated reports that end users ca
 
 The app must then be shared with end-users who will access the app and be able to consume all reports that have been deployed in it.
 
-> Note:
->
-> Reports that exist in the production workspace should **never** be modified directly in this workspace. If any modification is needed, the report must be changed and published in the development workspace; then validated by the user using the dev workspace's app. When all validations have been done and the report is ready for production, the report must be published to the Production workspace.
+{% hint style="info" %}
+**Note:** Reports that exist in the production workspace should never be modified directly in this workspace. If any modification is needed, the report must be changed and published in the development workspace; then validated by the user using the dev workspace's app. When all validations have been done and the report is ready for production, the report must be published to the Production workspace.
+{% endhint %}
 
 ### Organization and Governance
 
@@ -55,9 +55,9 @@ Division: This is the acronym for the division, as follows.
 
 Project Name \[Dev\]: This is the last part of the workspace name, and it should be the project name. Spaces are allowed in the project name. The \[Dev\] indicates that the development workspace should have the word Dev as a suffix.
 
-> Note:
->
-> The 3 parts of the workspace name are separated by a hyphen with a space; this is done to make names easier to read.
+{% hint style="info" %}
+**Note:** The 3 parts of the workspace name are separated by a hyphen with a space; this is done to make names easier to read.
+{% endhint %}
 
 ## Apps
 
@@ -87,9 +87,9 @@ Datasets are Power BI's way of sharing data without sharing a report, which is a
 
 Just like reports and apps, Power BI Datasets can be shared with other Power BI users in the organization,  which can enable data sharing and self-service capabilities.
 
-> Note:
->
-> Sharing a dataset doesn't automatically grant access to all the data referenced in the dataset. Proper permissions must be given at the data source level for users to be able to access the data.
+{% hint style="info" %}
+**Note:** Sharing a dataset doesn't automatically grant access to all the data referenced in the dataset. Proper permissions must be given at the data source level for users to be able to access the data.
+{% endhint %}
 
 ### Reusing Datasets
 

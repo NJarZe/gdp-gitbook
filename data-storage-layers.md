@@ -25,8 +25,8 @@ The landing zone is intended as:
 * The storage zone for the raw ingested data
 * An archive allowing reprocessing if so required
 
-{% hint style="warning" %}
-Note: Each data that gets ingested in GDP needs to land in this zone first.
+{% hint style="info" %}
+**Note:** Each data that gets ingested in GDP needs to land in this zone first.
 {% endhint %}
 
 This zone has the following properties:
