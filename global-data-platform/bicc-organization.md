@@ -17,5 +17,7 @@ The image below shows the spectrum of responsibility, that is, who is responsibl
 
 BICC still remains available for supporting local implementation teams with guidance and coaching on the use of the GDP components.
 
-![](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image12.png) Figure 11 Spectrum of Responsibility
+Furthermore, BICC is also responsible for managing the entire BI platform, from ADLS to Power BI. 
+
+![Spectrum of Responsibility](../.gitbook/assets/spectrum-responsibility.png)
 

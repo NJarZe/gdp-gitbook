@@ -6,7 +6,7 @@ The following image shows the high-level architecture of the Global Data Platfor
 
 The general structure of the data processing pipelines running on the Global Data Platform \(GDP\) follow the structure shown below
 
-![](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image8.png) Figure 7 High-Level Pipeline Architecture
+![Data Ingestion Process including tooling](../.gitbook/assets/data-ingestion-process.png)
 
-The blocks in green represent processing whereas the blocks in blue represent storage. In the following sub-sections, we will describe each of the components.
+The blocks in green represent data processing activities, and the blocks in orange are showing the orchestration engine. The light yellow block shows the areas where data is stored.
 
