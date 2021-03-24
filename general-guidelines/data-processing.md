@@ -16,9 +16,9 @@ The image below shows the high-level architecture of the GDP data processing pip
 
 Ingestion will be performed using the Copy activity of ADF, which has several connectors for connecting with a diverse set of data stores. 
 
-In Figure 8, ADF copy activity extracts the data from the source systems and copies it to the landing zone. Once the data is copied, Snowflake pull is triggered by ADF. The pull can be a copy command or a Snowpipe.
+In the image below, ADF copy activity extracts the data from the source systems and copies it to the landing zone. Once the data is copied, Snowflake pull is triggered by ADF. The pull can be a copy command or a Snowpipe.
 
-![](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image9.png) Figure 8 High Level Architecture with Processing Technologies
+![Architecture with Processing Technologies](../.gitbook/assets/data-ingestion-process.png)
 
 ### Metadata Table
 
