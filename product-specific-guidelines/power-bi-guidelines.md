@@ -161,6 +161,7 @@ This method is the recommended approach for all row-level security scenarios exc
 * File size limit of 1 GB is no longer an issue
 * Allows for building reports with large datasets
 * Allows for using row-level security based on tables in the source.
+* Since Row-level Security needs to be done in the source \(i.e. Snowflake\), there is great flexibility in its implementation. 
 
 #### Cons of DirectQuery Mode
 
