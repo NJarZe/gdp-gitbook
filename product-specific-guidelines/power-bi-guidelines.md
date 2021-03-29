@@ -145,6 +145,7 @@ This method is the recommended approach for all row-level security scenarios exc
 * All Power BI features are available in Import Mode, like alternative login to database connection, relationship filtering with "Both" directions. 
 * It can be faster than DirectQuery Mode, since the data is loaded into memory and queries are read from the data residing in memory.
 * New and calculated columns are fully supported
+* Does not consume Snowflake credits when users update the report, since the data is already loaded in the Power BI dataset. The only time Snowflake credits are consumed is when the dataset is refreshed \(which can be controlled\)
 
 #### Cons of Import Mode
 
@@ -167,6 +168,7 @@ This method is the recommended approach for all row-level security scenarios exc
 * Not all Power BI features are available. Availability will depend on the data source and type of data being used. 
 * Not all DAX functions are supported
 * Time capabilities \(for YTD calculations, for example\) are sometimes not supported
+* Each time data needs to be updated, it will consume Snowflake credits, which means there is a cost associated to the increased performance and higher volume of data. 
 
 
 
