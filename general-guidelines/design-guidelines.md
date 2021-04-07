@@ -63,7 +63,7 @@ The paths consist of the following parts:
       <td style="text-align:left">4 lower-case letters</td>
       <td style="text-align:left">
         <p>data: data ingested from source systems</p>
-        <p>exec: execition-related data, like pipeline metadata or logs</p>
+        <p>exec: execution-related data, like pipeline metadata or logs</p>
       </td>
     </tr>
     <tr>
