@@ -74,7 +74,7 @@ In addition, the loading errors are visible in Snowflake \(not in ADF\). Thus, f
 
 Snowpipes can be called via a REST APIwhen auto-ingest option is disabled. In this case, ADF can call the Snowpipe right after copying the data into ADLS. 
 
-The image below shows the process of calling the Snowpipe REST endpoint for ingestion of data loaded into ADLS. There are two steps for data ingestion using this approach. 
+There are two steps for data ingestion using this approach. 
 
 * Step 1: Loading data into ADLS. 
 * Step 2: Calling the REST endpoint of the corresponding Snowpipe with the paths of files that need to be ingested. The paths of these files are inserted in the ingest queue and the files are ingested by the Snowpipe using the COPY command. 

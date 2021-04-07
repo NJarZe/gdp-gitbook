@@ -9,9 +9,9 @@ description: >-
 
 ## Databases & Zones
 
-Figure 12 shows an overview of the database design rules in various storage layers of the GDP.
+Below is an overview of the database design rules in various storage layers of the GDP.
 
-![](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image13.png) Figure 12 Database Design Overview
+![Database design overview](../.gitbook/assets/database-design-overview.png)
 
 ### Landing Zone
 

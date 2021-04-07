@@ -26,9 +26,9 @@ The landing will be loaded with the data from the different sources. If for some
 
 ## Source Onboarding Process
 
-Figure 19 shows the source onboarding request. Source onboarding is required when it is the first time GDP will be ingesting the data from the source. Sources from which data has been ingested by the GDP at least once do not need to be onboarded because the BICC has complete information about ingestion of data from that particular data source.
+The image below shows the source onboarding request. Source onboarding is required when it is the first time GDP will be ingesting the data from the source. Sources from which data has been ingested by the GDP at least once do not need to be onboarded because the BICC has complete information about ingestion of data from that particular data source.
 
-![](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image19.png) Figure 19 Source Onboarding Process
+![Source onboarding process](../.gitbook/assets/source-onboarding-process.png)
 
 The step by step onboarding process is defined below:
 
