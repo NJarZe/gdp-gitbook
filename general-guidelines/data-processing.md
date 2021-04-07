@@ -68,7 +68,7 @@ A Snowpipe can be created with auto-ingest enabled. An integration with Azure ev
 
 In addition, the loading errors are visible in Snowflake \(not in ADF\). Thus, for complete visibility of data ingestion, both components \(ADF and Snowflake\) need to be logged into. ADF can be used for an automated creation of the Snowpipe per table. The following image shows the process flow of an Auto-Ingest Snowpipe. 
 
-![Snowpipe Auto-ingest Process Flow](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image10.png) Figure 9 Snowpipe Auto-Ingest Process Flow
+![Snowpipe auto-ingestion process](../.gitbook/assets/snowpipe-autoingestion.png)
 
 #### **Snowpipe via REST API**
 
@@ -80,8 +80,6 @@ The image below shows the process of calling the Snowpipe REST endpoint for inge
 * Step 2: Calling the REST endpoint of the corresponding Snowpipe with the paths of files that need to be ingested. The paths of these files are inserted in the ingest queue and the files are ingested by the Snowpipe using the COPY command. 
 
 Both the steps can be orchestrated using ADF.
-
-![Snowpipe Process Flow](https://github.com/NJarZe/gdp-gitbook/tree/4be67165d0fb6646303b084d135b48ef7065ae6d/media/image11.png) Figure 10 Calling a Snowpipe via its REST Endpoint
 
 ## General Principles for Data Ingestion
 
