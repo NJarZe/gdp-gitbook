@@ -20,9 +20,9 @@
 * [Snowflake Configuration](product-specific-guidelines/snowflake-configuration.md)
 * [Power BI](product-specific-guidelines/power-bi-guidelines.md)
 
-## Version Control <a id="version-control-1"></a>
+## Version Control
 
-* [Version Control Guidelines](version-control-1/version-control-guidelines.md)
+* [Version Control Guidelines](version-control/version-control-guidelines.md)
 
 ---
 
