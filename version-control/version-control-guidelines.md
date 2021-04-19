@@ -18,9 +18,18 @@ Within Azure DevOps there is a DevOps Organization called "AliaxisDataPlatform".
 
 Each \(DevOps\) Project in the AliaxisDataPlatform organization represents a division. That is, all the code and artifacts for a given division can be found under the project with the division's name \(for example, all EMEA projects, including Snowflake code and Data Factory artifacts, will be hosted in a DevOps Project called **EMEA**\).
 
-For every project that is being worked on within a division, there are several components that need to exist in Azure DevOps 1. A Team within the Project: This will manage who can access which code repositories. 2. A Repository: All project-related code will be saved in this repository \(Snowflake code, Data Factory artifacts, anything else that needs to be versioned and tracked.\).
+For every project that is being worked on within a division, there are several components that need to exist in Azure DevOps 
 
-Within each repository \(which represents a data platform project\), folders will be used to separate the different types of artifacts that are stored in the repo. For example, if there is a new project for "Group Contribution" in the EMEA division, which will be worked on the Data Platform, the following must be done. 1. Create a new repo in the EMEA DevOps Project. 2. Create a new folder in the repo called "data\_factory" for all Data Factory artifacts. 3. Create a new folder in the repo called "SnowflakeScripts" 4. Create subfolders under "SnowflakeScripts" to further organize the code. See Naming Conventions and Folder Organization for further reference.
+1. A team within the Project: This will manage who can access which code repositories.
+2. A code repository: All project-related code will be saved in this repository \(Snowflake code and anything else that needs to be versioned and tracked.\).
+3. A Data Factory repository: This repository is exclusive for Azure Data Factory artifacts. The code that is hosted in this repository is never modified directly, only via the Data Factory interface. 
+
+Within each repository \(which represents a data platform project\), folders will be used to separate the different types of artifacts that are stored in the repo. For example, if there is a new project for "Group Contribution" in the EMEA division, which will be worked on the Data Platform, the following must be done.
+
+1. Create a new repo in the EMEA DevOps Project.
+2. If the repo for Azure Data Factory is not yet created, create a new repo in the EMEA DevOps Project for ADF artifacts.
+3. Create a new folder in the repo called "SnowflakeScripts"
+4. Create subfolders under "SnowflakeScripts" to further organize the code. See Naming Conventions and Folder Organization for further reference.
 
 ## Ownership and Governance
 
@@ -58,7 +67,6 @@ For example,
 
 Every repo should have at least two high/root level folders: data-factory and snowflake-scripts
 
-* data-factory: This folder is where data factory will store its artifacts and code.
 * snowflake-scripts: This folder will contain all the Snowflake code.
 
 Within the snowflake-scripts folder, there needs to be 1 subfolder for each data warehouse layer \(STG, DWH\). In each data warehouse layer there should be at least 2 subfolders: dimensions, and facts. Within each subfolder, there should be the following folders:
@@ -72,12 +80,10 @@ Within the snowflake-scripts folder, there needs to be 1 subfolder for each data
 **Note:** At the root of STG & DWH folders, there must be a script file snowflake-init.sql. This file will contain the DDLS for all tables, views, stored procedures, file formats, stages, sequences, etc. needed for re-creating the entire environment \(without data\).
 {% endhint %}
 
-Example
+Example of a project repository
 
 ```text
 .
-├── data-factory
-│   └── adf-publish
 └── snowflake-scripts
     ├── snowflake-init.sql
     ├── stg
@@ -116,9 +122,9 @@ Git offers the ability to create branches for different purposes. Highlighted be
 
 ### Default \(mandatory\) branches
 
-Every repo **must** have at least **two** branches that will live permanently in the repo \(i.e. they should never be deleted\): master and dev.
+Every repo **must** have at least **two** branches that will live permanently in the repo \(i.e. they should never be deleted\): main and dev.
 
-* Master branch \(name: master\): This is the default branch for every new repo. It should always contain stable code and **should not** allow direct check-ins or commits. The only way to get code into the master branch is via a Pull Request with code review \(see Merging Strategy\). 
+* Master branch \(name: main\): This is the default branch for every new repo. It should always contain stable code and **should not** allow direct check-ins or commits. The only way to get code into the main branch is via a Pull Request with code review \(see Merging Strategy\). 
 * Dev branch \(name: dev\): This is the main development branch. Developers can use this as a working branch and will make changes to it regularly. 
 
 ### Temporary branches
@@ -149,7 +155,7 @@ When a new release branch is created, the release version should be added to the
 
 All branch names must be **lower case** and should describe the purpose of the branch. If the branch name contains several words, words must be separated by **hyphen \(-\)**.
 
-For default branches, the name must always be **master** and **dev**. Release branches must start with the word **release** followed by **hyphen** and the release number in the X.Y.Z format \(major.minor.patch\).
+For default branches, the name must always be **main** and **dev**. Release branches must start with the word **release** followed by **hyphen** and the release number in the X.Y.Z format \(major.minor.patch\).
 
 Examples for temporary branches
 
@@ -160,7 +166,7 @@ Examples for temporary branches
 
 ## Commits
 
-Commits are allowed, by default, on any branch except master. Only users that are contributing to the project are allowed to commit to the branches in the repo.
+Commits are allowed, by default, on any branch except main. Only users that are contributing to the project are allowed to commit to the branches in the repo.
 
 All commits go to the branch currently being worked on. Code that needs to be moved between branches \(merged\), will be moved based on the merging strategy.
 
@@ -170,17 +176,17 @@ Git allows for several ways to merge code from one branch into another branch, d
 
 ### Direct merge
 
-Direct merge means a developer, or the repo owner, can merge the code from one branch to another with a simple git command. This method should only be used when merging into any branch other than master.
+Direct merge means a developer, or the repo owner, can merge the code from one branch to another with a simple git command. This method should only be used when merging into any branch other than main.
 
 Note: If a temporary branch is merged into another branch, the temporary branch should be deleted.
 
 ### Pull Request
 
-This method must **always** be used when merging code into the master branch.
+This method must **always** be used when merging code into the main branch.
 
 When code has been tested by the developer, tested in the QA environment, and ready to be sent to production, a new "release branch" should be created as defined in "The Release Branch".
 
-Once ready to merge this code into the master branch, a **Pull Request** must be created via the DevOps user interface. The Pull Request should include approvers, who will review the changes and approve/decline as they deem convenient. When all approvals are done, the pull request is ready to be executed. Executing the pull request merges the code into the master branch and deletes the release branch.
+Once ready to merge this code into the main branch, a **Pull Request** must be created via the DevOps user interface. The Pull Request should include approvers, who will review the changes and approve/decline as they deem convenient. When all approvals are done, the pull request is ready to be executed. Executing the pull request merges the code into the main branch and deletes the release branch.
 
 ## Changelog
 
