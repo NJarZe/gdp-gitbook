@@ -170,6 +170,32 @@ Commits are allowed, by default, on any branch except main. Only users that are 
 
 All commits go to the branch currently being worked on. Code that needs to be moved between branches \(merged\), will be moved based on the merging strategy.
 
+Try, as much as possible, to make small commits that address a specific issue. For example, if you have two features implemented, make two individual commits. This allows for other developers to follow the commit history of the repo. 
+
+Always commit tested code to the dev branch. Incomplete code should not be part of the dev \(or main\) branch; if you want to push a partial change for backing up what you have written so far, you can use a personal temporary branch and commit into it. 
+
+Commits show the history of the repo, and the way to tell the story is through commit messages. Every commit you make should include a commit message. 
+
+{% hint style="warning" %}
+**Every commit** must include a **commit message**!
+{% endhint %}
+
+### Writing good commit messages
+
+Every commit must be accompanied by a commit message. The commit message should describe what is included in the commit, so when other developers read the commit log, they can understand what was done and why. Avoid using commit messages such as:
+
+* Fixed a bug
+* Adds new table
+* More changes
+
+To add some standardization to Git commit messages, try to follow these guidelines:
+
+* Use the imperative mood. For example, Fix instead of fixed or fixes. Change instead of changes or changed.  An easy way to know if your commit message follows this guideline is to see if properly completes this sentence: If applied, this commit will...
+* Keep your commit messages simple, but to the point. They should explain what the change is and why it was made. 
+* Do not assume the reader know the problem you're trying to solve. It is unclear, state the problem. 
+
+
+
 ## Merging Strategy
 
 Git allows for several ways to merge code from one branch into another branch, direct merge and pull request.
