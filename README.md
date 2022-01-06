@@ -4,7 +4,7 @@ description: >-
   Global Data Platform, which is sometimes referred to as GDP.
 ---
 
-# Home
+# Aliaxis GDP
 
 ## Introduction
 
