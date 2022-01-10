@@ -130,14 +130,14 @@ EXECUTE AS OWNER
 AS '
 
 // =============================================
-// Name: USP_EVENT_INGESTION
+// Name: USP_DATA_QUALITY_CHECK
 // Parameters:
 //              ENV: environment (DEV, TST, PRD)
 //              PROCESS_RUN_ID: Pipeline Run ID to be used in the Monitoring module
 //              IN_PROCESS_TS: TimeStamp to be used in some audit fields (ideally coming from Pipeline time execution)
 //              EXPECTATION_ID: Unique id to refer the expectation e.g. _Corporate_EMEA/SALES/sales-budget
 // Return: STRING
-// Description: execution of DQ SQLs for given business unit component
+// Description: execution of DQ SQLs for given business expectation
 // Change-Log:
 
 // =============================================
