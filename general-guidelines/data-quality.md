@@ -31,7 +31,11 @@ The structure of the metadata table is as follows
 | RAISE_EXCEPTION | Whether or not failed the pipeline on data quality compromise | True, False |
 | SEND_ALERT | Whether or not send email alert on data quality compromise | True, False |
 | IS_ACTIVE | Boolean attribute defines whether or not this expectation is active and should run or not. | True, False |
-
+#### Query
+``` 
+SELECT * FROM {DIVISION}_{ENV}_ODS.MANUAL_UPLOADS.EXPECTATION_DQ
+; 
+```
 
 ### Business Rule
 This table contains SQL queries for a given *Expectation* defined in expectation table.
@@ -46,6 +50,11 @@ The structure of the metadata table is as follows
 | EXECUTION_ORDER | An order of execution for all SQL statements aka business rules against expectation. | 1,2,3,4,5,6... |
 | IS_ACTIVE | Boolean attribute defines whether or not this expectation is active and should run or not. | True, False |
 | EXPECTATION_ID | A foreign key reference to *Expectation* table | _Corporate_EMEA/SALES/sales-budget, sales-unique-id |
+#### Query
+``` 
+SELECT * FROM {DIVISION}_{ENV}_ODS.MANUAL_UPLOADS.BUSINESS_RULE_DQ
+; 
+```
 
 ### Business Rule Result
 This table contains results for a given *Business Rule* defined in business rules table.
@@ -56,6 +65,11 @@ This table contains results for a given *Business Rule* defined in business rule
 | PROCESS_RUN_ID | ADF pipeline run id | 975882a0-772d-4e56-9ff3-ceeb01643532 |
 | EXECUTION_RESULT | JSON Object contains execution logs |  ```{"BUSINESS_RULE_STATUS": "FAILED", "HOW_TO_FIX": "Make sure company codes are correct and matching with code defined in SALES.DIM_COMPANY table.", "RULE_DESCRIPTION": "Step 1:Check COMPANY_CD", "SQL_STATEMENT": "SELECT IFNULL (SUM (CASE WHEN B.COMPANY_CD IS NULL THEN 1 ELSE 0 END), 0) > -1 AS RESULT \nFROM \nEMEA_DEV_ODS.MANUAL_UPLOADS.SALES_BUDGET A LEFT JOIN \nEMEA_DEV_DWH.SALES.DIM_COMPANY B \nON A.COMPANY_CD=B.COMPANY_CD ;"}```|
 | SF_TIMESTAMP | Datetime of execution for an evaluation. | 2022-01-07 06:08:11.353 -0800 |
+#### Query
+``` 
+SELECT * FROM {DIVISION}_{ENV}_META.DATA_QUALITY.BUSINESS_RULE_RESULT
+; 
+```
 
 ### Azure Data Factory Pipeline (ADF)
 
@@ -104,3 +118,91 @@ File must contain above mentioned fields required for tables in separate tabs.
 ## Sample Power BI Report for Data Quality
 Below image shows sample data qaulity report on Power BI, based on results stored in *Business Rule Results*.
 ![download the sample excel file for EMEA](../.gitbook/assets/sample-pbi-report.PNG)
+
+## Technical Guide
+Stored procedure is used to execute the business rules one by one in an order specified in the business rules table.
+Below is the code for the SP, which can directly be called from an pipeline or another SP:
+```
+CREATE OR REPLACE PROCEDURE "USP_DATA_QUALITY_CHECK"("ENV" VARCHAR(16777216), "PROCESS_RUN_ID" VARCHAR(16777216), "EXPECTATION_ID" VARCHAR(16777216))
+RETURNS VARCHAR(16777216)
+LANGUAGE JAVASCRIPT
+EXECUTE AS OWNER
+AS '
+
+// =============================================
+// Name: USP_EVENT_INGESTION
+// Parameters:
+//              ENV: environment (DEV, TST, PRD)
+//              PROCESS_RUN_ID: Pipeline Run ID to be used in the Monitoring module
+//              IN_PROCESS_TS: TimeStamp to be used in some audit fields (ideally coming from Pipeline time execution)
+//              EXPECTATION_ID: Unique id to refer the expectation e.g. _Corporate_EMEA/SALES/sales-budget
+// Return: STRING
+// Description: execution of DQ SQLs for given business unit component
+// Change-Log:
+
+// =============================================
+
+var result = "DQ - execution of all business rules has been completed successfully (USP_DATA_QUALITY_CHECK)";
+var sql_command = "";
+var return_obj = [];
+var return_result = null;
+
+try{
+    //FETCHING THE EXPECTATION RULES
+    resp = snowflake.createStatement({
+        sqlText: `SELECT *
+                    FROM EMEA_${ENV}_ODS.MANUAL_UPLOADS.BUSINESS_RULE_DQ
+                    WHERE UPPER("EXPECTATION_ID") = UPPER(:1) 
+                    AND "IS_ACTIVE" = TRUE
+                    ORDER BY EXECUTION_ORDER ASC`,
+            binds: [EXPECTATION_ID]
+        }).execute();
+
+    while(resp.next()){
+        var BUSINESS_RULE_ID = resp.getColumnValue(''BUSINESS_RULE_ID'');
+        var SQL_STATEMENT = resp.getColumnValue(''SQL_STATEMENT'');
+        var RULE_DESCRIPTION = resp.getColumnValue(''RULE_DESCRIPTION'');
+        var HOW_TO_FIX = resp.getColumnValue(''HOW_TO_FIX'');
+        // EXECUTING RULES ONE-BY-ONE
+        sql_resp = snowflake.createStatement({
+            sqlText: SQL_STATEMENT
+        }).execute(_no_result = false);
+        
+        sql_resp.next();
+        BUSINESS_RULE_FAILED = sql_resp.getColumnValue(''RESULT'');
+        var BUSINESS_RULE_STATUS = (BUSINESS_RULE_FAILED == true) ? ''FAILED'' : ''PASSED'';
+        // STORING THE RESULT FOR EACH RULE EXECUTION
+        result_obj = {''SQL_STATEMENT'':SQL_STATEMENT
+                        ,''RULE_DESCRIPTION'':RULE_DESCRIPTION
+                        ,''HOW_TO_FIX'':HOW_TO_FIX
+                        ,''BUSINESS_RULE_STATUS'':BUSINESS_RULE_STATUS};
+        
+        return_obj.push(result_obj);        
+        result_obj_str = JSON.stringify(result_obj);
+        
+        //INGESTING INTO RESULTTABLE
+        snowflake.createStatement({
+            sqlText: `INSERT INTO EMEA_${ENV}_META.DATA_QUALITY.BUSINESS_RULE_RESULT(BUSINESS_RULE_ID,BUSINESS_RULE_STATUS,PROCESS_RUN_ID,EXECUTION_RESULT)
+            SELECT :1, :2, :3, PARSE_JSON(:4)`,
+            binds: [BUSINESS_RULE_ID,BUSINESS_RULE_STATUS.toString(),PROCESS_RUN_ID, result_obj_str]
+        }).execute();
+    
+    }//while loop end
+   
+    
+    return_result = {''result'': result, ''execution_detail'': return_obj};
+    
+}
+catch(err){
+    result = "DQ - Error executing business rule SQLs (rules exception).\\n[Error] : " + err;
+    return_result = {''result'': result, ''execution_detail'': return_obj};
+    
+    throw JSON.stringify(return_result);
+}
+
+
+
+return JSON.stringify(return_result);
+
+';
+```
