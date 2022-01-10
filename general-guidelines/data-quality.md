@@ -34,7 +34,7 @@ The structure of the metadata table is as follows
 
 
 ### Business Rule
-This table contains SQL queries for a given *Expectation* defined in previous tab.
+This table contains SQL queries for a given *Expectation* defined in expectation table.
 
 The structure of the metadata table is as follows
 | Field Name | Description | Sample Value\(s\) |
@@ -48,7 +48,14 @@ The structure of the metadata table is as follows
 | EXPECTATION_ID | A foreign key reference to *Expectation* table | _Corporate_EMEA/SALES/sales-budget, sales-unique-id |
 
 ### Business Rule Result
-This table contains SQL queries for a given *Expectation* defined in previous tab.
+This table contains results for a given *Business Rule* defined in business rules table.
+| Field Name | Description | Sample Value\(s\) |
+| :--- | :--- | :--- |
+| BUSINESS_RULE_ID | Unique id referenced to the business rule | 1234, unique-guid |
+| BUSINESS_RULE_STATUS | Status of evaluation for a given business rule | PASSED, FAILED |
+| PROCESS_RUN_ID | ADF pipeline run id | 975882a0-772d-4e56-9ff3-ceeb01643532 |
+| EXECUTION_RESULT | JSON Object contains execution logs |  ```{"BUSINESS_RULE_STATUS": "FAILED", "HOW_TO_FIX": "Make sure company codes are correct and matching with code defined in SALES.DIM_COMPANY table.", "RULE_DESCRIPTION": "Step 1:Check COMPANY_CD", "SQL_STATEMENT": "SELECT IFNULL (SUM (CASE WHEN B.COMPANY_CD IS NULL THEN 1 ELSE 0 END), 0) > -1 AS RESULT \nFROM \nEMEA_DEV_ODS.MANUAL_UPLOADS.SALES_BUDGET A LEFT JOIN \nEMEA_DEV_DWH.SALES.DIM_COMPANY B \nON A.COMPANY_CD=B.COMPANY_CD ;"}```|
+| SF_TIMESTAMP | Datetime of execution for an evaluation. | 2022-01-07 06:08:11.353 -0800 |
 
 ### Azure Data Factory Pipeline (ADF)
 
@@ -93,3 +100,7 @@ To make the ingestion process easy and accessible to technical teams, expectatio
 
 File must contain above mentioned fields required for tables in separate tabs.
 [download the sample excel file for EMEA](../.gitbook/assets/sample-excel-file.xlsx)
+
+## Sample Power BI Report for Data Quality
+Below image shows sample data qaulity report on Power BI, based on results stored in *Business Rule Results*.
+![download the sample excel file for EMEA](../.gitbook/assets/sample-pbi-report.PNG)
