@@ -9,13 +9,13 @@ description: Aliaxis Data Quality Framework
 This document covers the details of data quality evaluation process for Aliaxis business processes and its corresponding DWH tables. This document will enable the end users to define data quality rules and constraints in an excel file which will then be uploaded on the SharePoint from where it will be picked up by the daily ingestion process. These new tables will then act as the driving force for the entire data quality and business rule evaluation pipelines.
 
 #### Business Rules Flow 
-![Architecture with Processing Technologies](../.gitbook/assets/data-quality-process-1.JPG)
+![Architecture with Processing Technologies](../.gitbook/assets/data-quality-process-1.jpg)
 ## How can I use it in Azure data factory (ADF)?
 ### **Option 1**: In your current ADF pipeline, add data quality after STG layer.
-![Architecture with Processing Technologies](../.gitbook/assets/data-quality-process-2.JPG)
+![Architecture with Processing Technologies](../.gitbook/assets/data-quality-process-2.jpg)
 
 ### **Option 2**: Data Quality can also be ensured when data manually uploaded into the ODS layer.
-![Architecture with Processing Technologies](../.gitbook/assets/data-quality-process-3.JPG)
+![Architecture with Processing Technologies](../.gitbook/assets/data-quality-process-3.jpg)
 
 ### **Data Quality Tables**
 
