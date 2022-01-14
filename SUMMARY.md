@@ -14,6 +14,7 @@
 * [Design Guidelines](general-guidelines/design-guidelines.md)
 * [Data Loading Strategy](general-guidelines/data-loading-strategy.md)
 * [Security](general-guidelines/security.md)
+* [Data Quality](general-guidelines/data-quality.md)
 
 ## Product-Specific Guidelines
 
