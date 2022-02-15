@@ -14,7 +14,7 @@
 * [Design Guidelines](general-guidelines/design-guidelines.md)
 * [Data Loading Strategy](general-guidelines/data-loading-strategy.md)
 * [Security](general-guidelines/security.md)
-* [Manual Upload Process](general-guidelines/data-upload.md)
+* [Manual Upload Process](general-guidelines/manual-data-upload.md)
 * [Data Quality](general-guidelines/data-quality.md)
 
 ## Product-Specific Guidelines
@@ -26,7 +26,6 @@
 
 * [Version Control Guidelines](version-control/version-control-guidelines.md)
 
----
+***
 
 * [Glossary](glossary.md)
-
