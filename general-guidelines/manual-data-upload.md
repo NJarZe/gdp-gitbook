@@ -26,12 +26,20 @@ The following diagram shows the high-level data flow for loading the manually up
 
 ## Steps to configure Manual Upload File from SharePoint to ODS
 
-1. Open the file. Copy the file structure and create a table in ODS with the same name as the file name. For example, we take ‘JIMTEN\_AGENT\_EMAIL\_ADDRESS.xlsx’ file. ![Manual uploads architect](../.gitbook/assets/example-1.png) \
+1. Open the file. Copy the file structure and create a table in ODS with the same name as the file name. For example, we take ‘JIMTEN\_AGENT\_EMAIL\_ADDRESS.xlsx’ file. ![Manual uploads architect](../.gitbook/assets/agent-email-example-01.png) \
    Below is the SQL for creating the table in the ODS\
    `USE EMEA_DEV_ODS;`\
    `USE SCHEMA MANUAL_UPLOADS;`\
    `USE WAREHOUSE EMEA_DEV_ELT_WH;`\
-   `CREATE OR REPLACE TABLE JIMTEN_AGENT_EMAIL_ADDRESS` `(` `VENDOR_CD INT,` `VENDOR_NAMEVARCHAR(16777216),EMAIL_ADDRESS VARCHAR(16777216),` `FILE_NAME VARCHAR(16777216), SF_TIMESTAMP TIMESTAMP_TZ(9) DEFAULT` `CURRENT_TIMESTAMP(),FILE_METADATA OBJECT,IS_DELETED BOOLEAN);`\
+   `CREATE OR REPLACE TABLE JIMTEN_AGENT_EMAIL_ADDRESS` `(` \
+   `VENDOR_CD INT,` \
+   `VENDOR_NAME VARCHAR(16777216),`\
+   `EMAIL_ADDRESS VARCHAR(16777216),` \
+   `FILE_NAME VARCHAR(16777216),` \
+   `SF_TIMESTAMP TIMESTAMP_TZ(9) DEFAULT` `CURRENT_TIMESTAMP(),`\
+   `FILE_METADATA OBJECT,`\
+   `IS_DELETED BOOLEAN`\
+   `);`\
    ``\
    ``FILE\_NAME, FILE\_METADATA, IS\_DELETED and SF\_TIMESTAMP are extra metadata columns that have been added for the table maintenance purpose.\
 
