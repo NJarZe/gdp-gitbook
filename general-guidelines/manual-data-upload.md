@@ -88,4 +88,3 @@ The following diagram shows the high-level data flow for loading the manually up
 ## Planned Features
 
 1. Support for delete-insert based on unique column. To avoid the duplicates in the target table when `TRUNCATE\_TARGET\_TABLE` is marked as false. (`In Progress`)
-2. 
