@@ -46,12 +46,14 @@ SELECT * FROM {DIVISION}_{ENV}_ODS.MANUAL_UPLOADS.EXPECTATION_DQ
 
 ### Business Rule
 This table contains SQL queries for a given *Expectation* defined in expectation table.
+For each SQL_STATEMENT, expected to return rows/rcords; a table will be created with all returned bad records with below format: 
+`<DIVISION>_<ENV>_META.DATA_QUALITY.DQ_EXP<EXPECTATION NAME>_BR_<RULE ID>`
 
 The structure of the metadata table is as follows
 | Field Name | Description | Sample Value\(s\) |
 | :--- | :--- | :--- |
 | BUSINESS_RULE_ID | Unique id assignment for the business rule | 1234, unique-guid |
-| SQL_STATEMENT | SQL query to be run against expectation, query `MUST` return boolean result i.e. `FALSE AS RESULT`. If `FALSE` then quality check will be considered as successful| ```SELECT IFNULL (SUM (CASE WHEN B.COMPANY_CD IS NULL THEN 1 ELSE 0 END), 0) > -1 AS RESULT FROM EMEA_DEV_ODS.MANUAL_UPLOADS.SALES_BUDGET A LEFT JOIN EMEA_DEV_DWH.SALES.DIM_COMPANY B ON A.COMPANY_CD = B.COMPANY_CD ;``` |
+| SQL_STATEMENT | SQL query to be run against expectation, query `MUST` return rows i.e. If `any row returned` then quality check will be considered as failed | ```SELECT A.* FROM EMEA_DEV_ODS.MANUAL_UPLOADS.SALES_BUDGET A LEFT JOIN EMEA_DEV_DWH.SALES.DIM_COMPANY B ON A.COMPANY_CD = B.COMPANY_CD ;``` |
 | RULE_DESCRIPTION | Description for the rule | Step 1: Check COMPANY_CD |
 | HOW_TO_FIX | Details about how to fix this data quality issue | Make sure company codes are correct and matching with code defined in SALES.DIM_COMPANY table. |
 | EXECUTION_ORDER | An order of execution for all SQL statements aka business rules against expectation. | 1,2,3,4,5,6... |
@@ -81,6 +83,7 @@ SELECT * FROM {DIVISION}_{ENV}_META.DATA_QUALITY.BUSINESS_RULE_RESULT
 ### Azure Data Factory Pipeline (ADF)
 
 Azure data factory pipeline can be used to trigger the expectation with set of business rules after certain point in master piplein(s). For example, this pipeline can be called after data has been ingested via manual upload process as well as after the STG ingestion to evaluate the quality of that after transformation.
+`For each manual upload, if expectations and rules(in form of valid SQLs) are defined, process will try to evaluate the data quality.`
 ### Parameters
 
 1. `EXPECTATION_ID` - optional if DIVISION,BUSINESS_UNIT and BUSINESS_UNIT_COMPONENT are supplied
@@ -130,7 +133,7 @@ Below image shows sample data qaulity report on Power BI, based on results store
 Stored procedure is used to execute the business rules one by one in an order specified in the business rules table.
 Below is the code for the SP, which can directly be called from an pipeline or another SP:
 ```
-CREATE OR REPLACE PROCEDURE "USP_DATA_QUALITY_CHECK"("ENV" VARCHAR(16777216), "PROCESS_RUN_ID" VARCHAR(16777216), "EXPECTATION_ID" VARCHAR(16777216))
+CREATE OR REPLACE PROCEDURE DATA_QUALITY."USP_DATA_QUALITY_CHECK"("ENV" VARCHAR(16777216), "PROCESS_RUN_ID" VARCHAR(16777216), "EXPECTATION_ID" VARCHAR(16777216))
 RETURNS VARCHAR(16777216)
 LANGUAGE JAVASCRIPT
 EXECUTE AS OWNER
@@ -165,16 +168,75 @@ try{
             binds: [EXPECTATION_ID]
         }).execute();
 
+    // EXECUTING RULES ONE-BY-ONE
     while(resp.next()){
         var BUSINESS_RULE_ID = resp.getColumnValue(''BUSINESS_RULE_ID'');
         var SQL_STATEMENT = resp.getColumnValue(''SQL_STATEMENT'');
         var RULE_DESCRIPTION = resp.getColumnValue(''RULE_DESCRIPTION'');
         var HOW_TO_FIX = resp.getColumnValue(''HOW_TO_FIX'');
-        // EXECUTING RULES ONE-BY-ONE
-        sql_resp = snowflake.createStatement({
-            sqlText: SQL_STATEMENT
+        // PREPAREING TABLE NAME
+        var EXP_TABLE_NAME = `DQ_EXP_${EXPECTATION_ID}_BR_${BUSINESS_RULE_ID}`.replace(/[;:/-]/g,''_'');
+        var EXP_FULL_TABLE_NAME = `EMEA_${ENV}_META.DATA_QUALITY.${EXP_TABLE_NAME}`;
+        var TMP_EXP_FULL_TABLE_NAME = `EMEA_${ENV}_META.DATA_QUALITY.TMP_${EXP_TABLE_NAME}_${PROCESS_RUN_ID}`.replace(/[;:/-]/g,''_'');
+        var EXP_TABLE_SCRIPT = `SELECT RESP_TBL.*,
+            ''${PROCESS_RUN_ID}'' AS PROCESS_RUN_ID,
+            CURRENT_TIMESTAMP AS DQ_TIMESTAMP
+            FROM ( ${SQL_STATEMENT} ) RESP_TBL`;
+
+        // CREATE TABLE ONLY
+        snowflake.createStatement({
+            sqlText: `CREATE TABLE IF NOT EXISTS ${EXP_FULL_TABLE_NAME} AS ${EXP_TABLE_SCRIPT} WHERE 1 = 2`
         }).execute(_no_result = false);
         
+        // PICKUP THE DQ TABLE AND CREATE A TMP TABLE
+        snowflake.createStatement({
+            sqlText: `CREATE TABLE IF NOT EXISTS ${TMP_EXP_FULL_TABLE_NAME} AS SELECT * FROM ${EXP_FULL_TABLE_NAME}`
+        }).execute(_no_result = false);
+        
+        // DROP DQ COLUMNS
+        snowflake.createStatement({
+            sqlText: `ALTER TABLE ${TMP_EXP_FULL_TABLE_NAME} DROP COLUMN PROCESS_RUN_ID, DQ_TIMESTAMP`
+        }).execute(_no_result = false);
+
+        // COMPARE WITH THIS TMP TABLE WHILE INGESTION SO THAT SAME ISSUE NOT REPORTED AGAIN AND AGAIN
+        snowflake.createStatement({
+            sqlText: `INSERT INTO ${EXP_FULL_TABLE_NAME}
+            WITH CET_NEW_RECORDS AS (
+                SELECT RESP_TBL.*
+                FROM ( ${SQL_STATEMENT} ) RESP_TBL EXCEPT (SELECT * FROM ${TMP_EXP_FULL_TABLE_NAME})
+            )
+            SELECT *,
+            ''${PROCESS_RUN_ID}'' AS PROCESS_RUN_ID,
+            CURRENT_TIMESTAMP AS DQ_TIMESTAMP
+            FROM CET_NEW_RECORDS
+            `
+        }).execute(_no_result = false);
+        
+        // MARK ORIGINAL RECORDS AS IS_DELETED
+        snowflake.createStatement({
+            sqlText: `INSERT INTO ${EXP_FULL_TABLE_NAME}
+            WITH CET_NEW_RECORDS AS (
+                SELECT RESP_TBL.*
+                FROM ( ${SQL_STATEMENT} ) RESP_TBL EXCEPT (SELECT * FROM ${TMP_EXP_FULL_TABLE_NAME})
+            )
+            SELECT *,
+            ''${PROCESS_RUN_ID}'' AS PROCESS_RUN_ID,
+            CURRENT_TIMESTAMP AS DQ_TIMESTAMP
+            FROM CET_NEW_RECORDS
+            `
+        }).execute(_no_result = false);
+        
+
+        // DROP TMP TABLE
+        snowflake.createStatement({
+            sqlText: `DROP TABLE IF EXISTS ${TMP_EXP_FULL_TABLE_NAME}`
+        }).execute(_no_result = false);
+
+        // CHECKING IF THERE ARE BAD RECORDS
+        sql_resp = snowflake.createStatement({
+            sqlText: `SELECT COUNT(1) > 1 AS RESULT FROM ${EXP_FULL_TABLE_NAME} WHERE PROCESS_RUN_ID = ''${PROCESS_RUN_ID}''`
+        }).execute(_no_result = false);
+
         sql_resp.next();
         BUSINESS_RULE_FAILED = sql_resp.getColumnValue(''RESULT'');
         var BUSINESS_RULE_STATUS = (BUSINESS_RULE_FAILED == true) ? ''FAILED'' : ''PASSED'';
@@ -189,9 +251,9 @@ try{
         
         //INGESTING INTO RESULTTABLE
         snowflake.createStatement({
-            sqlText: `INSERT INTO EMEA_${ENV}_META.DATA_QUALITY.BUSINESS_RULE_RESULT(BUSINESS_RULE_ID,BUSINESS_RULE_STATUS,PROCESS_RUN_ID,EXECUTION_RESULT)
-            SELECT :1, :2, :3, PARSE_JSON(:4)`,
-            binds: [BUSINESS_RULE_ID,BUSINESS_RULE_STATUS.toString(),PROCESS_RUN_ID, result_obj_str]
+            sqlText: `INSERT INTO EMEA_${ENV}_META.DATA_QUALITY.BUSINESS_RULE_RESULT(BUSINESS_RULE_ID,BUSINESS_RULE_STATUS,PROCESS_RUN_ID,EXECUTION_RESULT,DQ_TABLE_NAME)
+            SELECT :1, :2, :3, PARSE_JSON(:4), :5`,
+            binds: [BUSINESS_RULE_ID,BUSINESS_RULE_STATUS.toString(), PROCESS_RUN_ID, result_obj_str, EXP_FULL_TABLE_NAME]
         }).execute();
     
     }//while loop end
