@@ -200,6 +200,17 @@ For example, for EMEA production environment, the name of the stage schema would
 
 This schema should contain all the file formats used for the loading of files from ADLS/Blob Storage, and any configuration tables that manage the ingestion of data into ODS.
 
+#### Landing Temporary Data Schema
+
+A stage schema should be created in the ODS of the DIV with the following naming convention: **{DIV}\_{ENV}\_ODS.TMP\_LAN**
+
+For example, for EMEA production environment, the name of the stage schema would be: **EMEA\_PRD**\_**ODS.TMP\_LAN**
+
+This schema should contain all the transactional tables before loading the data into ODS. Example use-case is to load the data in TMP_LAN evaluate the quality of data before loading into ODS table.
+
+TODO; why this table name convension?
+Table naming convention: **EMEA\_PRD**\_**ODS.TMP\_LAN.[ODS TABLE NAME]\_[ADF Pipeline run id]**
+
 ### STG \(Staging\)
 
 The staging layer is where data is prepared prior to making an incremental load into the data warehoue zone. 
