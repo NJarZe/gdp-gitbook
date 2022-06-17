@@ -20,6 +20,104 @@ In the image below, ADF copy activity extracts the data from the source systems 
 
 ![Architecture with Processing Technologies](../.gitbook/assets/data-ingestion-process.png)
 
+<br><br>
+
+### **Azure Data Factory Standards**
+
+>### Standards & Conventions
+<p>This section covers the details of the Azure data factory (ADF) for Aliaxis business processes and its corresponding pipelines, datasets, linked services, and Integration runtime. When you are naming components, you must make sure to follow the naming convention.</p>                                         
+
+
+•	Must be unique within a data factory\
+•	Never use white space\
+•	Names must be readable and meaningful\
+•	Use only letters (lowercase) and underscores
+
+    Example : { test_pipline } 
+
+
+>### Pipelines
+<p>
+In Data Factory we can create one or more pipelines. Data Factory allows you folder structure that can organize pipelines. A pipeline is a logical grouping of activities that together perform a task. The name of the pipeline must specify a name that represents the action that the pipeline performs.</p>
+
+
+•	Maximum number of characters: 140\
+•	Must be unique within a data factory\
+•	Object names must start with a letter\
+•	Never use white space\
+•	Names must be readable and meaningful\
+•	Use only letters (lowercase) and underscores
+
+    Example : { test_pipline } 
+
+
+### Datasets
+<p>
+A dataset is a named view of data that simply points to or references the data you want to use in your activities as inputs and outputs. Datasets identify data within different data stores, such as tables, files, folders, and documents. For example, an Azure Blob dataset specifies the blob container and folder in Blob Storage from which the activity should read the data. The naming connection must be as follow.</p>
+
+
+•	Object names must start with a letter\
+•	Never use white space\
+•	Names must be readable and meaningful\
+•	Use only letters (lowercase) and underscores
+•	Type of the dataset. Specify one of the types supported by Data Factory (for example: DelimitedText, AzureSqlTable)
+
+    Example : { test_dataset } 
+<br></br>
+> ### Quick note
+### Azure Key Vault for security
+<p><em>
+It's recommended to use Azure Key Vault to store any connection strings or passwords Data Factory Linked Services. For security reasons, data factory doesn't store secrets in Git. Any changes to Linked Services containing secrets such as passwords are published immediately to the Azure Data Factory service.<br>
+</em>
+</p>
+
+>### Linked services
+<p>
+Before you create a dataset, you must create a linked service to link your data store to the Data Factory. Linked services are much like connection strings, which define the connection information needed for the service to connect to external resources. The naming connection must be as follow.</p>
+
+
+•	Must be unique within a data factory\
+•	Object names must start with a letter\
+•	Never use white space\
+•	Names must be readable and meaningful\
+•	Use only letters (lowercase) and underscores
+
+    Example : { test_link_service } 
+
+
+>### Integration Runtime
+<p>
+The Integration Runtime (IR) is the compute infrastructure used by Azure Data Factory to provide the data flow, data movement, activity dispatch and data integration capabilities across different network environments. Integration runtime would be used in all data factory instances. The naming convention must be as follow.</p>
+
+
+•	Unique within a data factory\
+•	Integration must be unique within a data factory. They are case-insensitive\
+•	Integration runtime Name can contain only letters, numbers and the dash (-) character
+•	The first and last characters must be a letter or number. Every dash (-) character must be immediately preceded and followed by a letter or a number\
+•	Consecutive dashes are not permitted in the integration runtime name
+
+    Example : { test-integration-runtime } 
+
+
+>### Continuous Deployment
+<br>
+
+<p>
+Create a feature/bug-fix branch based on the master branch. After making the feature changes, create a pull request to the master branch and that request must be approved and merged by <b>BICC</b> members. Further for deployment, only <b>BICC</b> members can publish the changes to ADF dev environment.
+</p>
+
+![CI/CD Integration](../.gitbook/assets/CI_CD_Integration.png)
+<br><br>
+<p>
+<b>BICC</b> members have the dynamic CI/CD pipelines to deploy the changes in a different environment merged to the main/master branch after approval by the team members.
+<br>
+Each deployment require <b>BICC</b> to approval the release. No code can be deployed to the higher environment unless a BICC member approves it.
+ </p>
+
+![CI/CD approval cycle ](../.gitbook/assets/test_prod.png)
+
+<br>
+
 ### Metadata Table
 
 All Data Factory pipelines that ingest data from source to the ODS layer will use a metadata table that exists in the ODS database, under the schema meta\_lan. 
