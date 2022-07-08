@@ -21,6 +21,7 @@
 
 * [Snowflake Configuration](product-specific-guidelines/snowflake-configuration.md)
 * [Power BI](product-specific-guidelines/power-bi-guidelines.md)
+* [TM1 Gateway (TM1Connect)](product-specific-guidelines/tm1connect-guidelines.md)
 
 ## Version Control
 
